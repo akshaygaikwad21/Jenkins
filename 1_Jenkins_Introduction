@@ -1,0 +1,52 @@
+ *** Jenkins **
+ 
+- It is Free and Open - source.
+- Written in Java
+- work in GUI
+- work on port 8080
+
+ 
+ Why Jenkins is popular?
+ 
+- comparitively easy to use and user friendly
+- have large number of plugins (1800+)
+
+DevOps - Automate the repetative task, easy, time saving
+
+
+Previously ,
+
+Developers develope the code and push over to github,
+Then, to deploy that code over the server then they follow the below steps- 
+	
+	- Pull code.
+	- build it - (.WAR, .JAR  (Artifact))
+	- Test 
+	- Deploy over server.
+	
+	
+
+** DevOps Engg. comes here,
+
+DevOps Engg. will automate this steps using Jenkins tool.
+
+- We crete a pipeline in that all these steps are written in a script format.
+
+
+Pipeline - > CICD ( Continues Inegration, Continues Deployment)
+				  ( Continues Inegration, Continues Delivery)
+				  
+				 
+How Pipeline will work ?
+
+-	When we push our code into main branch, then the Pipeline will trigger and,
+	it will automatically deploy the code over the server.
+	
+	
+
+* There are also other tools than Jenkins -
+		
+	- GitLab, Github_Action, cloud_pipeline, azure_pipeline.
+	
+	
+	

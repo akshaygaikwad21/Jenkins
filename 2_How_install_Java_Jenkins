@@ -1,0 +1,36 @@
+Jenkins-
+
+sudo -i
+
+yum provides java
+
+Then, Choose any Java version above 17 and install it.
+
+yum install  java-17-amazon-corretto-1:17.0.10+7-1.amzn2023.1.x86_64 -y
+
+Now, 
+
+we need install Jenkins
+
+Go to this , https://www.jenkins.io/doc/book/installing/linux/#red-hat-centos
+ 
+ and run the command one by one.
+ 
+wget -O /etc/yum.repos.d/jenkins.repo \
+    https://pkg.jenkins.io/redhat-stable/jenkins.repo
+  
+ 
+ 
+rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
+
+
+yum upgrade
+
+yum install jenkins
+
+ systemctl start jenkins
+ systemctl enable jenkins
+ 
+ Done...
+ 
+ 
