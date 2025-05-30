@@ -1,0 +1,47 @@
+✅ Fix: Use a GitHub Personal Access Token (PAT)
+To access a private repo from Jenkins or Git over HTTPS, you must use a Personal Access Token (PAT) instead of your password.
+
+🔧 Step-by-Step: Set Up GitHub Access in Jenkins
+1. Generate a Personal Access Token (PAT)
+Go to https://github.com/settings/tokens
+
+Click "Generate new token"
+
+Use these scopes:
+
+✅ repo (for full control of private repos)
+
+✅ workflow (optional, for actions)
+
+Copy the token and save it safely (you won’t see it again).
+
+2. Add the Token to Jenkins Credentials
+In Jenkins, go to:
+Manage Jenkins → Credentials → (global) → Add Credentials
+
+Select:
+
+Kind: Username and Password
+
+Username: Your GitHub username
+
+Password: Your GitHub personal access token
+
+ID (optional): github-pat (or something meaningful)
+
+Description: e.g. "GitHub PAT for private repo"
+
+3. Use the Credential in Your Jenkins Job
+In your Jenkins project:
+
+Go to Configure
+
+Under Source Code Management → Git
+
+Set Repository URL:
+
+arduino
+Copy
+Edit
+https://github.com/akshaygaikwad21/Private_repo.git
+Select the credentials you just added from the dropdown
