@@ -8,19 +8,8 @@ pipeline{
         }
         stage ('build'){
             steps{
-                echo 'build created'
-            }
-        }
-        stage ('test'){
-            steps{
-                echo 'tested'
-            }
-        }
-        stage ('deploy'){
-            steps{
-                echo 'deployed'
+                sh '/opt/apache-maven-3.9.9/bin/mvn clean package'
             }
         }
     }
 }
-   
