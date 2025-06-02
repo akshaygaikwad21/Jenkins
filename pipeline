@@ -1,0 +1,15 @@
+pipeline{
+    agent any
+    stages{
+        stage ('pull'){
+            steps{
+                git branch: 'Jenkins_pipeline', url: 'https://github.com/akshaygaikwad21/Jenkins.git'
+            }
+        }
+        stage ('build'){
+            steps{
+                sh '/opt/apache-maven-3.9.9/bin/mvn clean package'
+            }
+        }
+    }
+}
