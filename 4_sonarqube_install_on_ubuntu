@@ -1,0 +1,100 @@
+Intsall jdk17
+
+ apt install openjdk-17-jdk -y
+ 
+download sonarqube
+
+ wget https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-25.5.0.107428.zip
+ 
+ unzip it 
+
+  unzip sonarqube-25.5.0.107428.zip
+      apt update
+      unzip sonarqube-25.5.0.107428.zip
+      apt install unzip -y
+     unzip sonarqube-25.5.0.107428.zip
+
+
+Install PostgreSQL.
+
+$ sudo apt install postgresql postgresql-contrib -y
+
+Enable the database server to start automatically on reboot.
+
+$ sudo systemctl enable postgresql
+
+Start the database server.
+
+$ sudo systemctl start postgresql
+
+Change the default PostgreSQL password.
+
+$ sudo passwd postgres
+
+Switch to the postgres user.
+
+$ su — postgres
+
+Create a user named sonar.
+
+$ createuser sonar
+
+Log in to PostgreSQL.
+
+$ psql
+
+Set a password for the sonar user. Use a strong password in place of my_strong_password.
+
+ALTER USER sonar WITH ENCRYPTED password ‘my_strong_password’;
+
+Create a sonarqube database and set the owner to sonar.
+
+CREATE DATABASE sonarqube OWNER sonar;
+
+Grant all the privileges on the sonarqube database to the sonar user.
+
+GRANT ALL PRIVILEGES ON DATABASE sonarqube to sonar;
+
+Exit PostgreSQL.
+
+\q
+
+Return to your non-root sudo user account.
+
+$ exit
+
+
+move the sonarqube to /opt
+ mv sonarqube /opt
+ 
+ 
+Now, change the owner to ubuntu
+
+chown ubuntu:ubuntu /opt/sonarqube -R
+
+ll
+
+Now, exit from root user
+
+cntrl +d
+
+Now, got the directoy and start sonarQube
+
+ cd /opt/sonarqube/bin/linux-x86-64/
+ 
+ ls
+ 
+  ./sonar.sh start
+  ./sonar.sh status
+ 
+ NOw, got to your instance and edit inbound rule and add 9000 port .
+ 
+ then, login through the public ip:9000
+ 
+ public ip:9000
+ 
+ and then, login to sonarqube admin username and admin password,
+ 
+ then chnage that password.
+ 
+ and Done.
