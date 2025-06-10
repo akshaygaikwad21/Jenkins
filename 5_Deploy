@@ -1,0 +1,159 @@
+Deploy the WAR on tomcat server through pipeline.
+
+1) Launch a tomcat namned EC2 server and allow port 8080 in it.
+
+- sudo -i
+
+- yum provides java
+
+- install java 17 OR 21
+
+- then,  install tomcat on this server
+
+-  wget https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.106/bin/apache-tomcat-9.0.106.tar.gz
+
+- tar -xzf apache-tomcat-9.0.106.tar.gz -C /opt
+
+- After this then startup the tomcat .
+
+-  cd apache-tomcat-9.0.106/bin
+	./startup.sh
+	
+- Then got tomcat via ur public ip : 8080
+
+- then, u need to edit servers conf/tomcat-users.xml file
+
+- add this 
+
+-->
+<!--
+  <role rolename="tomcat"/>
+  <role rolename="role1"/>
+  <user username="tomcat" password="<must-be-changed>" roles="tomcat"/>
+  <user username="both" password="<must-be-changed>" roles="tomcat,role1"/>
+  <user username="role1" password="<must-be-changed>" roles="role1"/>
+-->
+<role rolename="manager-gui"/>
+<role rolename="manager-script"/>
+<role rolename="manager-jmx"/>
+<role rolename="manager-status"/>
+<role rolename="manager-admin"/>
+<user username="Akshay" password="1234" roles="manager-gui,manager-script,manager-jmx,manager-status,manager-admin"/>
+
+</tomcat-users>
+
+- Save it.
+
+- Then, shutdown the tomcat and start it again.
+
+- /opt/apache-tomcat-9.0.106/bin
+
+	./shutdown.sh
+	
+	./startup.sh
+	
+- After this,
+
+- again edit the context.xml file of this path -> 
+
+/opt/apache-tomcat-9.0.106/webapps/manager/META-INF
+vi context.xml
+
+		
+- and comment the valve 
+
+ <!--  <Valve className="org.apache.catalina.valves.RemoteAddrValve"
+  allow="127\.\d+\.\d+\.\d+|::1|0:0:0:0:0:0:0:1" /> -->
+  
+- Save the file.
+
+
+
+2) Now, We have for depoy the .WAR via pipeline , create a ubuntu EC2 instance of named Jenkins.
+
+-	allow port 8080 to it.
+
+-	Then, install the jdk 17
+
+	apt update -y && apt install openjdk-17-jdk -y
+	
+-	Then, Install Jenkins for ubuntu.
+
+	 apt install jenkins
+     wget -O /etc/apt/keyrings/jenkins-keyring.asc   https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
+     echo "deb [signed-by=/etc/apt/keyrings/jenkins-keyring.asc]"   https://pkg.jenkins.io/debian-stable binary/ | sudo tee   /etc/apt/sources.list.d/jenkins.list > /dev/null
+     apt-get install jenkins
+     systemctl status jenkins
+	 
+
+
+-	Then, install Maven download & install in it.
+
+	 wget https://dlcdn.apache.org/maven/maven-3/3.9.10/binaries/apache-maven-3.9.10-bin.tar.gz
+	 
+	 tar -xzf apache-maven-3.9.10-bin.tar.gz -C /opt
+	 
+	 
+- Now, open Jenkins on browser.
+
+cat /var/lib/jenkins/secrets/initialAdminPassword
+
+-	choose first option i.e install plugins.
+
+- then , create a pipeline via pipeline script
+
+- install a plugin i.e -> deploy to container.
+
+- use the below script
+
+pipeline{
+    agent any
+    stages{
+        stage('pull the code'){
+            steps{
+                git 'https://github.com/cloudmaster2025/sonar.git'
+            }
+        }
+        stage('build'){
+            steps{
+                sh '/opt/maven/bin/mvn clean package'
+            }
+        }
+        stage('deploy the code on server'){
+            steps{
+                deploy adapters: [tomcat9(alternativeDeploymentContext: '', credentialsId: 'learning', path: '', url: 'http://3.110.156.255:8080/')], contextPath: '/', war: '**/*.war'
+            }
+        }
+    }
+}
+	 
+
+- for deploy stage u need to generate a pipeline script
+
+-in that , 
+	- for WAR/EAR files give -> **/*.war
+	- Context path -> /
+	- container choose -> Tomcat 9.x Remote
+	- The, add ur tomcat credential that u given in the context.xml file for tomcat.
+	- and give Tomcat URL Ex- > http://3.110.156.255:8080/
+	- Generate pipeline script
+	
+- apply it to script and save it.
+	 
+- build it.
+
+- after succefully build, the build WAR file is generated on tomcat server below path.
+
+-  cd /opt/apache-tomcat-9.0.106/webapps/
+
+- ROOT.war file will be there
+
+- Then , refresh ur tomcat server 
+ http://3.110.156.255:8080/
+ 
+ u will see the website.
+ 
+- Done.
+
+------------------------------------------------------------------------------------------
+
