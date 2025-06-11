@@ -33,7 +33,7 @@ $ sudo passwd postgres
 
 Switch to the postgres user.
 
-$ su — postgres
+$ sudo -u postgres -i
 
 Create a user named sonar.
 
