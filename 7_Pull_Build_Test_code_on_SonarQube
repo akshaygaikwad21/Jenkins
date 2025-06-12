@@ -1,0 +1,111 @@
+*** Pulling, Building and Testing the project on Sonarqube ***
+
+ create a Jenkins EC2 instance of Linux / t2.medium
+
+ allow port 8080 to it.
+
+Then,  yum provies java
+
+	- install the java 17 OR 21
+	
+then install Jenkins on your server
+
+
+wget -O /etc/yum.repos.d/jenkins.repo \
+    https://pkg.jenkins.io/redhat-stable/jenkins.repo
+	
+rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
+
+yum install jenkins
+
+systemctl start jenkins
+
+systemctl enable jenkins
+
+ install git 
+	 apt install git -y
+
+Also, install maven on the Jenkins Server
+
+and unzip and move to /opt 
+
+
+2) create a sonarqube EC2 instance of ubuntu / t2.medium
+
+ allow port 9000 to it.
+
+apt update -y && apt install openjdk-17-jdk -y
+
+ install git 
+	 apt install git -y
+	 
+
+Now, start the sonarqube server
+
+/opt/sonarqube/bin/linux-x86-64# ./sonar.sh status
+
+
+Then, Go to sonar public ip:9000
+
+login and create a project , the genreate a tocken and copy the maven command of it in notepad++
+
+Ex:- 
+
+mvn clean verify sonar:sonar \
+  -Dsonar.projectKey=studentapp \
+  -Dsonar.projectName='studentapp' \
+  -Dsonar.host.url=http://13.127.175.232:9000 \
+  -Dsonar.token=sqp_c0d03bd9bb28c64d6bac4c187d8d0f4678c17633
+  
+  
+  
+ Then, login to Jenkins  
+ 
+ - install sonarqube scanner plugins
+ - then, createa pipeline
+ - write the below script
+ 
+ pipeline{
+    agent any
+    stages{
+        stage('pull'){
+            steps{
+                git 'https://github.com/akshaygaikwad21/sonar.git'
+            }
+        }
+        stage('build'){
+            steps{
+                sh '/opt/maven/bin/mvn clean package'
+            }
+        }
+        stage('test') {
+            steps {
+        withSonarQubeEnv(installationName: 'sonar-install', credentialsId: 'learning') {
+            sh ''' 
+                /opt/maven/bin/mvn sonar:sonar \
+                    -Dsonar.projectKey=studentapp \
+                    -Dsonar.projectName="studentapp" \
+                    -Dsonar.host.url=http://13.127.175.232:9000 \
+                    -Dsonar.login=sqp_20daa77f6bf5e9ffa63c2edb366f0d6883fa912a
+            '''
+        }
+    }
+}
+    }
+}
+
+
+
+
+
+IMP -> - For this Script Please refer the Cloudblitz video recording of Jenkins 40.
+
+- after writting script apply it and save it.
+
+- now build it.
+
+- Then, it will automatically pull,build and Test your code on sonarqube.
+
+---------- Done -----------
+
+
