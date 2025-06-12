@@ -1,0 +1,72 @@
+*** Cloning the project and Testing the project build on Sonarqube ***
+
+1) create a Jenkins EC2 instance of Linux / t2.medium
+
+2) allow port 8080 to it.
+
+3) Then,  yum provies java
+
+	- install the java 17 OR 21
+	
+4) then install Jenkins on your server
+
+
+wget -O /etc/yum.repos.d/jenkins.repo \
+    https://pkg.jenkins.io/redhat-stable/jenkins.repo
+	
+rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
+
+yum install jenkins
+
+systemctl start jenkins
+
+systemctl enable jenkins
+
+5) create a sonarqube EC2 instance of ubuntu / t2.medium
+
+6) allow port 9000 to it.
+
+7) apt update -y && apt install openjdk-17-jdk -y
+
+8) Then, install and start sonarqube in this server.
+
+9) install maven to ur server
+
+10) Then, move it to /opt
+
+11) install git 
+	 apt install git -y
+
+12) Then, clone the project 
+	 git clone https://github.com/akshaygaikwad21/sonar.git
+	 
+13)  Now , we have to create build for your project.
+
+14) for that, login to sonarqube and, create aproject
+
+15) and genrate the token
+
+16) and, copy the maven command 
+
+mvn clean verify sonar:sonar \
+>     -Dsonar.projectKey=studentapp \
+>     -Dsonar.projectName="studentapp" \
+>     -Dsonar.host.url=http://15.207.21.89:9000 \
+>     -Dsonar.token=sqp_017d2b5138151e89082b9d2bf8557ca26940d957
+
+
+17) now to create build , go to the ubuntu server of sonarqube
+
+and, go to ur project directory
+
+i.e cd sonar
+ and the, run the abov maven command to ur project directory so the build will create
+ 
+ Ex- > ~/sonar# mvn clean verify sonar:sonar \
+>     -Dsonar.projectKey=studentapp \
+>     -Dsonar.projectName="studentapp" \
+>     -Dsonar.host.url=http://15.207.21.89:9000 \
+>     -Dsonar.token=sqp_017d2b5138151e89082b9d2bf8557ca26940d957
+
+....Done....
+
