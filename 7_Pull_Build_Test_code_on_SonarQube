@@ -1,5 +1,8 @@
 *** Pulling, Building and Testing the project on Sonarqube ***
 
+IMP -> Refer Day 41 Recording of Jenkins.
+
+
  create a Jenkins EC2 instance of Linux / t2.medium
 
  allow port 8080 to it.
