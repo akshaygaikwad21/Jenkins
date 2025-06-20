@@ -1,0 +1,153 @@
+** Deploy WAR to Tomcat Server via pipeline **
+
+	-> Refer - Video 43 of Jenkins  <-
+	
+	
+Step 1) create a Jenkins EC2 instance of Linux / t2.medium
+
+ allow port 8080 to it.
+
+Then,  yum provies java
+
+	- install the java 17 OR 21
+	
+then install Jenkins on your server
+
+
+wget -O /etc/yum.repos.d/jenkins.repo \
+    https://pkg.jenkins.io/redhat-stable/jenkins.repo
+	
+rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
+
+yum install jenkins
+
+systemctl start jenkins
+
+systemctl enable jenkins
+
+ install git 
+	 apt install git -y
+
+Also, install maven on the Jenkins Server
+
+and unzip and move to /opt 
+
+------------------------------------------------------------------------------------
+Step 2) create a Tomcat EC2 instance of Linux / t2.micro
+
+ allow port 8080 to it.
+
+Then,  yum provies java
+
+	- install the java 17 OR 21
+	
+Then , wget https://downloads.apache.org/tomcat/tomcat-9/v9.0.106/bin/apache-tomcat-9.0.106.tar.gz
+
+then, use tar -xzf apache-tomcat-9.0.106 
+
+Then, mv apache-tomcat-9.0.106 tomcat
+
+and move it to /opt 
+
+mv tomcat /opt
+
+
+Also,
+
+Download and install maven 
+
+and move it to /opt
+
+Then, also install git
+
+yum install git -y
+
+-------------------------------------------------------------------------------------------
+
+Step 3) - open tomcat and now we have to modify the below files.
+
+ 1st file -  tomcat-users.xml in /opt/tomcat/conf
+ 
+ cd /opt/tomcat/conf
+ 
+ vi  tomcat-users.xml
+ 
+ and in this add the below content 
+ 
+ <role rolename="manager-gui"/>
+<role rolename="manager-script"/>
+<role rolename="manager-jmx "/>
+<role rolename="manager-status"/>
+<role rolename="manager-admin"/>
+<user username="tomcat" password="12345" roles="manager-gui,manager-script,manager-jmx,manager-status,manager-admin"/>
+
+save it ...
+
+2nd file - context.xml  in /opt/tomcat/webapps/manager/META-INF
+
+cd /opt/tomcat/webapps/manager/META-INF 
+vi context.xml
+
+Just uncomment the valve command-
+
+  <!--  <Valve className="org.apache.catalina.valves.RemoteAddrValve"
+  allow="127\.\d+\.\d+\.\d+|::1|0:0:0:0:0:0:0:1" /> -->
+  
+  
+  
+save it..
+
+----------------------------------------------------------------------------------------------------
+
+ste	4) now login to jenkins
+
+install the "Deploy to container" plugin
+
+then, create a pipeline 
+
+and use the below script
+
+pipeline {
+    agent any
+    stages{
+        stage('pull'){
+            steps{
+                git 'https://github.com/akshaygaikwad21/sonar.git'
+            }
+        }
+        stage('build'){
+            steps{
+                sh '/opt/maven/bin/mvn clean package'
+            }
+        }
+        stage('deploy'){
+            steps{
+                deploy adapters: [tomcat9(alternativeDeploymentContext: '', credentialsId: 'tom', path: '', url: 'http://13.201.168.153:8080/')], contextPath: '/', war: '**/*.war'
+            }
+        }
+    }
+}
+
+
+
+- For stage('deploy') we need to use pipeline syntax .
+- in that choose Deploy to container plugin.
+- then give mentiones **/*.WAR
+- the context path as /
+- then, create creditals, 
+
+- give tomcat creditals and its host path 
+- add this syntax to stage deploy.
+
+i.e deploy adapters: [tomcat9(alternativeDeploymentContext: '', credentialsId: 'tom', path: '', url: 'http://13.201.168.153:8080/')], contextPath: '/', war: '**/*.war'
+
+
+-----------------------------------------------------------------------------------------------------------------
+
+step 5) apply and save
+
+Build it .
+
+Done... 
+
+-----------------------------------------------------------------------------------------------------------------
