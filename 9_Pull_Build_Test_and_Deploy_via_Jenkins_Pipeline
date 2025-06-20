@@ -1,0 +1,84 @@
+
+** Pull, build, test and depoly via Jenkins Pipeline **
+
+
+Step 1 - First do the pull and build and test 
+
+for these 3 , Refer the video of Jenkins - Day 41 Recording of Jenkins. 
+	
+	Or my system path directory and go to the notes
+	
+	cd E:\CloudBitz\Jenkins
+	Pull_Build_Test_code_on_SonarQube.txt
+
+
+
+
+Step 2- for Deploy 
+
+		Refer the Jenkins Recording - Day 43 of Jenkins 
+
+			Or
+		
+	 my system path directory and go to the notes
+	
+	cd E:\CloudBitz\Jenkins
+	Deploy to tomcat server via pipeline.txt
+
+
+
+
+
+Step 3- For this we need below plugins to be installed in Jenkins
+			- sonarqube scanner
+			- Deploy to container
+			- stage view
+		
+
+step 4-  For this we need 3 EC servers
+		i.e 
+		Tomcat -- t2.micro
+		Jenkins -- t2.medium
+		Sonarqube -- t2.medium
+		
+		
+		
+Step 5 - below pipeline script  used for pull build test and deploy.
+
+pipeline{
+    agent any
+    stages{
+        stage('pull'){
+            steps{
+                git 'https://github.com/akshaygaikwad21/sonar.git'
+            }
+        }
+        stage('build'){
+            steps{
+                sh '/opt/maven/bin/mvn clean package'
+            }
+        }
+        stage('test'){
+            steps{
+                withSonarQubeEnv(installationName: 'sonar-install2', credentialsId: 'Jenkins2sonar') {
+                sh '''
+                    /opt/maven/bin/mvn sonar:sonar \
+                    -Dsonar.projectKey=studentapp \
+                    -Dsonar.projectName=studentapp
+                '''
+
+}
+                
+            }
+        }
+        stage('deploy'){
+            steps{
+                deploy adapters: [tomcat9(alternativeDeploymentContext: '', credentialsId: 'tom', path: '', url: 'http://13.233.144.26:8080/')], contextPath: '/', war: '**/*.war'
+            }
+        }
+    }
+}
+
+
+
+-----------------------------------------------------Done---------------------------------------------
